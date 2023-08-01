@@ -1,4 +1,9 @@
 import airports from "../airports.json"
+import { Airport } from "../store"
+
+export const Letter_Length = 3
+
+const airport = getRandomAirport()
 
 export function getRandomAirport(){
   const randomIndex = Math.floor(Math.random() * airports.length)
@@ -6,62 +11,46 @@ export function getRandomAirport(){
 }
 
 export enum LetterState {
-  Miss,
-  Present,
   Match,
+  Present,
+  Miss,
 }
 
-export function computeGuess(
-  guess: string, 
-  airportString: string
-  ): LetterState[] {
+console.log(airport);
 
-  const result: LetterState[] = []
+export function computeGuess(guess: string, airportString: Airport): LetterState[] {
+  const result: LetterState[] = Array.from({ length: guess.length }, () => LetterState.Miss);
+  const guessArray = guess.split("");
+  const answer = airportString.iataCode.split("");
 
-  if (guess.length !== airportString.length) {
-    return result
+  if (guess.length !== airportString.iataCode.length) {
+    return result;
   }
 
-  const guessArray = guess.split("")
+  const answerLetterCount: Record<string, number> = {};
 
-  const answer = airportString.split("")
+  // Count the occurrences of each letter in the answer
+  answer.forEach((letter) => {
+    answerLetterCount[letter] = (answerLetterCount[letter] || 0) + 1;
+  });
 
-  const answerLetterCount: Record<string, number> = {}
-
-  guessArray.forEach((letter, index ) => {
-    const currentAnswerLetter=answer[index]
-
-    answerLetterCount[currentAnswerLetter] = answerLetterCount[currentAnswerLetter] ? answerLetterCount[currentAnswerLetter] + 1 : 1
-
-    if (currentAnswerLetter === letter){
-      result.push(LetterState.Match)
-    } else if (answer.includes(letter)) {
-      result.push(LetterState.Present)
-    } else {
-      result.push(LetterState.Miss)
+  // Check for exact matches (LetterState.Match)
+  guessArray.forEach((letter, index) => {
+    if (letter === answer[index]) {
+      result[index] = LetterState.Match;
+      answerLetterCount[letter] -= 1; // Decrement the count for exact matches
     }
-  })
-    result.forEach((curResult, resultIndex) => {
-      if (curResult !== LetterState.Present) {
-        return
-      }
+  });
 
-      const guessLetter = guessArray[resultIndex]
+  // Check for partially matching letters (LetterState.Present)
+  guessArray.forEach((letter, index) => {
+    if (result[index] !== LetterState.Match && answerLetterCount[letter] && answerLetterCount[letter] > 0) {
+      result[index] = LetterState.Present;
+      answerLetterCount[letter] -= 1; // Decrement the count for partially matching letters
+    }
+  });
 
-      answer.forEach((currentAnswerLetter, answerIndex) => {
-        if (currentAnswerLetter !== guessLetter) {
-          return
-        }
-        
-        if (result[answerIndex] === LetterState.Match) {
-          result[resultIndex] = LetterState.Miss
-        }
-
-        if (answerLetterCount[guessLetter] <= 0) {
-          result[resultIndex] = LetterState.Miss
-        }
-      })
-      answerLetterCount[guessLetter]--
-    })
-    return result
+  return result;
 }
+
+
