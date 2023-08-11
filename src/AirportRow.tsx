@@ -21,11 +21,11 @@ export default function AirportRow({ letters: lettersProp = "" }: AirportRowProp
   const guessStates = computeGuess(lettersProp, answer); // Pass the entire answer object to computeGuess
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <span className="grid grid-cols-3 gap-4">
       {letters.map((char, index) => (
         <CharacterBox key={index} value={char} state={guessStates[index]} />
       ))}
-    </div>
+    </span>
   );
 }
 
