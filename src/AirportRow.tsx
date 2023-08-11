@@ -1,11 +1,11 @@
-import { LetterState, computeGuess } from "./test/airport-utils";
-import { useStore, Airport } from "./store";
-import { Letter_Length } from "./test/airport-utils";
+import { LetterState, Letter_Length} from "./test/airport-utils";
+
 
 
 
 interface AirportRowProps {
   letters: string;
+  result?: LetterState[]
 }
 
 interface CharacterBoxProps {
@@ -13,17 +13,16 @@ interface CharacterBoxProps {
   state?: LetterState;
 }
 
-export default function AirportRow({ letters: lettersProp = "" }: AirportRowProps) {
-  const answer = useStore((state) => state.answer as Airport); // Explicitly specify the Airport interface
+export default function AirportRow({ letters: lettersProp = "", result = [] }: AirportRowProps) {
+  console.log('AirportRow result:', result); // Add this line
+
   const lettersRemaining = Letter_Length - lettersProp.length;
   const letters = lettersProp.split('').concat(Array(lettersRemaining).fill(''));
-
-  const guessStates = computeGuess(lettersProp, answer); // Pass the entire answer object to computeGuess
 
   return (
     <span className="grid grid-cols-3 gap-4">
       {letters.map((char, index) => (
-        <CharacterBox key={index} value={char} state={guessStates[index]} />
+        <CharacterBox key={index} value={char} state={result[index]} />
       ))}
     </span>
   );
@@ -31,16 +30,20 @@ export default function AirportRow({ letters: lettersProp = "" }: AirportRowProp
 
 
 
+
 function CharacterBox({ value, state }: CharacterBoxProps) {
+  console.log('CharacterBox state:', state); // Add this line
+  
   const stateStyles =
     state == null
       ? 'border-gray-500 text-black'
       : `${characterStateStyles[state]} text-white`;
   return (
     <span
-      className={`border-2 p-2 uppercase text-center font-extrabold text-4xl before:inline-block before:content-['_'] ${stateStyles} `}
+      className={`inline-block border-2 boreder-black-500 p-6 before: inline-block before:content-['_'] uppercase font-bold text-2xl text-center ${stateStyles}`}
     >
       {value}
+      
     </span>
   );
 }
@@ -50,3 +53,4 @@ const characterStateStyles = {
   [LetterState.Present]: 'border-yellow-500 bg-yellow-500',
   [LetterState.Match]: 'border-green-500 bg-green-500',
 };
+

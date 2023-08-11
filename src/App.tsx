@@ -11,7 +11,7 @@ export default function App() {
 
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGuess = e.target.value
+    const newGuess = e.target.value.toUpperCase()
 
     if(newGuess.length === Letter_Length){
       state.addGuess(newGuess)
@@ -20,18 +20,18 @@ export default function App() {
     }
     setGuess(newGuess)
   }
-
-  let rows = [...state.guesses]
+  console.log('App Rows:', state.rows);
+  let rows = [...state.rows]
 
   if (rows.length < GUESS_LENGTH) {
-    rows.push(guess)
+    rows.push({guess})
   }
 
   const numberOfGuessesRemaining = GUESS_LENGTH - rows.length
 
   rows = rows.concat(Array(numberOfGuessesRemaining).fill(""))
 
-  const isGameOver = state.guesses.length === GUESS_LENGTH
+  const isGameOver = state.rows.length === GUESS_LENGTH
 
   return (
     <div className="mx-auto w-96 relative">
@@ -49,8 +49,8 @@ export default function App() {
       </div>
       </header>
       <main className="grid grid-rows-6 gap-4">
-        {rows.map((word, index) => (
-          <AirportRow key={index} letters={word} />
+        {rows.map(({guess, result}, index) => (
+          <AirportRow key={index} letters={guess} result={result}/>
         ))}
 
       </main>

@@ -11,10 +11,11 @@ export function getRandomAirport(){
 }
 
 export enum LetterState {
-  Match,
-  Present,
   Miss,
+  Present,
+  Match,
 }
+
 
 console.log(airport);
 
@@ -50,7 +51,10 @@ export function computeGuess(guess: string, airportString: Airport): LetterState
     }
   });
 
+  console.log('Computed Guess:', result); // Add this line to log the computed result
+
   return result;
 }
+
 
 

@@ -10,7 +10,7 @@ describe('App', () => {
   });
 
   it('shows empty state', (done) => {
-    useStore.setState({ guesses: [] });
+    useStore.setState({ rows: [] });
     render(<App />);
   
     // Introduce a slight delay before making assertions
@@ -24,14 +24,14 @@ describe('App', () => {
   });
 
   it('shows one row of guesses', () => {
-    useStore.setState({ guesses: ['BOS'] });
+    useStore.setState({ rows: [{guess:'BOS'}] });
     render(<App />);
     
     expect(document.querySelector('main')?.textContent).toEqual('BOS');
   });
 
   it('shows game over state', () => {
-    useStore.setState({ guesses: Array(6).fill("BOS") });
+    useStore.setState({ rows: Array(6).fill("BOS") });
     render(<App />);
     
     // expect(document.querySelector('main')?.textContent).toEqual('BOS');

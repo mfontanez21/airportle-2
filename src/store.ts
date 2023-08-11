@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getRandomAirport } from './test/airport-utils';
+import { computeGuess, getRandomAirport, LetterState } from './test/airport-utils';
+
+interface GuessRow{
+  guess: string;
+  result?: LetterState[]
+}
 
 export interface Airport {
   iataCode: string;
@@ -11,7 +16,7 @@ export interface Airport {
 
 interface StoreState {
   answer: Airport;
-  guesses: string[];
+  rows: GuessRow[];
   addGuess: (guess: string) => void;
 }
 
@@ -19,12 +24,12 @@ export const useStore = create<StoreState>()(
   persist(
     (set) => ({
       answer: getRandomAirport(),
-      guesses: [],
+      rows: [],
       addGuess: (guess: string) => {
-        // Convert the guess to uppercase before processing
-        const uppercaseGuess = guess.toUpperCase();
         set((state) => ({
-          guesses: [...state.guesses, uppercaseGuess],
+          rows: [...state.rows, 
+            {
+            guess, result: computeGuess(guess, state.answer)}],
         }));
       },
     }),
